@@ -19,16 +19,16 @@ function getWelcomeFirstName(userId: string) {
 }
 
 const Header = () => (
-  <header className="sticky top-0 z-40 bg-[#121212] pt-14 pb-0 border-b border-[#2a2a2a]">
+  <header className="sticky top-0 z-40 bg-[#111111] pt-14 pb-0 border-b border-[#2C2C2E]">
     <div className="flex justify-between items-center mb-4 px-4">
       <div className="w-8"></div> {/* Spacer for centering */}
-      <h1 className="text-[28px] font-bold italic tracking-tighter">
+      <h1 className="text-[26px] font-bold italic tracking-tighter text-white">
         yahoo<span className="text-[#7d2eff]">!</span> news
       </h1>
       <button className="p-2 -mr-2"><Search className="w-6 h-6 text-white" strokeWidth={2.5} /></button>
     </div>
     
-    <div className="flex overflow-x-auto hide-scrollbar text-[15px] font-semibold text-[#8a8a8e] px-4">
+    <div className="flex overflow-x-auto hide-scrollbar text-[16px] font-semibold text-[#A1A1AA] px-4">
       <button className="text-white pb-3 mr-6 border-b-2 border-[#7d2eff] whitespace-nowrap">For You</button>
       <button className="pb-3 mr-6 whitespace-nowrap">U.S. politics</button>
       <button className="pb-3 mr-6 whitespace-nowrap">Celebs</button>
@@ -39,91 +39,116 @@ const Header = () => (
 );
 
 const Feed = () => (
-  <main className="flex-1 overflow-y-auto pb-28 pt-4 px-4 bg-[#121212] space-y-4">
+  <main className="flex-1 overflow-y-auto pb-32 pt-4 px-4 bg-[#111111] space-y-4">
     {/* Keep reading card */}
-    <div className="bg-[#2a2a2c] rounded-2xl p-4 shadow-sm border border-[#3a3a3c]">
-      <h2 className="font-semibold mb-6 text-[17px]">Keep reading to level up.</h2>
-      <div className="w-full bg-[#4a4a4c] rounded-full h-1 mb-3">
-        <div className="bg-[#8e8e93] h-1 rounded-full" style={{ width: '85%' }}></div>
+    <div className="bg-[#222222] rounded-2xl p-4 shadow-sm border border-[#2C2C2E]">
+      <h2 className="font-semibold mb-6 text-[16px] text-white">Keep reading to level up.</h2>
+      <div className="w-full bg-[#333333] rounded-full h-1.5 mb-3">
+        <div className="bg-[#A1A1AA] h-1.5 rounded-full" style={{ width: '85%' }}></div>
       </div>
-      <p className="text-[15px] text-[#8e8e93]">10 more reads to reach Seeker level.</p>
+      <p className="text-[14px] text-[#A1A1AA]">10 more reads to reach Seeker level.</p>
     </div>
 
     {/* Morning Briefing card */}
-    <div className="bg-[#2a2a2c] rounded-2xl p-4 relative shadow-sm border border-[#3a3a3c]">
-      <div className="flex items-center gap-1.5 mb-3 text-[#af79ff] font-semibold text-[15px]">
+    <div className="bg-[#222222] rounded-2xl p-4 relative shadow-sm border border-[#2C2C2E]">
+      <div className="flex items-center gap-1.5 mb-3 text-[#7d2eff] font-semibold text-[14px]">
         <span className="text-lg leading-none mt-[-2px]">✦</span> Morning Briefing
       </div>
       <div className="flex gap-4">
         <div className="flex-1">
-          <h2 className="font-bold text-[20px] leading-[1.25] mb-5 text-[#f2f2f7]">Colbert's final 'Late Show' episode airs, NASCAR's Kyle Busch dies at 41, and GOP divisions stall Trump agenda</h2>
+          <h2 className="font-semibold text-[18px] leading-[1.3] mb-5 text-[#f2f2f7]">Colbert's final 'Late Show' episode airs, NASCAR's Kyle Busch dies at 41, and GOP divisions stall Trump agenda</h2>
           <div className="flex items-center gap-3">
-            <button className="w-[42px] h-[42px] bg-[#3a3a3c] rounded-full flex items-center justify-center pl-1 hover:bg-[#4a4a4c]">
-              <Play className="w-5 h-5 text-[#af79ff]" fill="currentColor" />
+            <button className="w-[48px] h-[48px] bg-[#3a3a3c] rounded-full flex items-center justify-center pl-1 hover:bg-[#4a4a4c]">
+              <Play className="w-6 h-6 text-[#7d2eff]" fill="currentColor" />
             </button>
-            <div className="flex-1 flex gap-[2px] items-center h-8">
+            <div className="flex-1 flex gap-[2px] items-center h-8 opacity-70">
               {Array.from({length: 24}).map((_, i) => (
-                <div key={i} className="w-[3px] bg-[#8e8e93] rounded-full" style={{height: `${Math.max(20, Math.random() * 100)}%`}}></div>
+                <div key={i} className="w-[2px] bg-[#A1A1AA] rounded-full" style={{height: `${Math.max(20, Math.random() * 100)}%`}}></div>
               ))}
             </div>
-            <span className="text-[14px] text-[#8e8e93]">02:44</span>
+            <span className="text-[14px] text-[#A1A1AA]">02:44</span>
           </div>
         </div>
         <div className="w-[88px] h-[88px] bg-black rounded-xl shrink-0 overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=100&h=100&fit=crop" className="w-full h-full object-cover opacity-90" alt="Late Show" />
+          <img src="https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=100&h=100&fit=crop" className="w-full h-full object-cover" alt="Late Show" />
         </div>
       </div>
     </div>
 
     {/* Big Article Card */}
-    <div className="bg-[#2a2a2c] rounded-2xl overflow-hidden shadow-sm border border-[#3a3a3c]">
-      <div className="h-[220px] bg-black w-full overflow-hidden">
-        <img src="https://images.unsplash.com/photo-1541872703868-3e4b097b399d?w=600&h=400&fit=crop" className="w-full h-full object-cover opacity-90" alt="Kevin Warsh" />
+    <div className="bg-[#222222] rounded-2xl overflow-hidden shadow-sm border border-[#2C2C2E]">
+      <div className="h-[200px] w-full overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1541872703868-3e4b097b399d?w=600&h=400&fit=crop" className="w-full h-full object-cover" alt="Kevin Warsh" />
       </div>
       <div className="p-4">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2.5">
             <div className="w-6 h-6 rounded-full bg-[#7d2eff] flex items-center justify-center text-[10px] font-black text-white">Y!</div>
-            <span className="font-medium text-[15px]">Yahoo Finance</span>
-            <span className="text-[#8e8e93] text-[15px]">42m</span>
+            <span className="font-semibold text-[14px] text-white">Yahoo Finance</span>
+            <span className="text-[#A1A1AA] text-[14px]">42m</span>
           </div>
-          <button><MoreHorizontal className="w-5 h-5 text-[#8e8e93]" /></button>
+          <button><MoreHorizontal className="w-5 h-5 text-[#A1A1AA]" /></button>
         </div>
-        <h2 className="font-bold text-[22px] leading-[1.2] mb-5 text-[#f2f2f7]">Kevin Warsh sworn in as Fed chair as inflation worries raise the volume on possible rate hikes</h2>
-        <div className="flex items-center justify-between text-[#8e8e93]">
-          <div className="flex gap-7">
-            <button className="flex items-center gap-2"><MessageCircle className="w-[22px] h-[22px]" /> <span className="text-[15px] font-medium">1.9K</span></button>
-            <button><Bookmark className="w-[22px] h-[22px]" /></button>
-            <button><Share className="w-[22px] h-[22px]" /></button>
+        <h2 className="font-semibold text-[20px] leading-[1.3] mb-5 text-[#f2f2f7]">Kevin Warsh sworn in as Fed chair as inflation worries raise the volume on possible rate hikes</h2>
+        <div className="flex items-center justify-between text-[#A1A1AA]">
+          <div className="flex gap-6">
+            <button className="flex items-center gap-1.5"><MessageCircle className="w-[20px] h-[20px]" /> <span className="text-[14px] font-medium">1.9K</span></button>
+            <button><Bookmark className="w-[20px] h-[20px]" /></button>
+            <button><Share className="w-[20px] h-[20px]" /></button>
           </div>
-          <div className="flex items-center gap-1.5 text-[15px] font-medium">
-            <span className="w-5 h-5 border-[2.5px] border-[#8e8e93] rounded-full flex items-center justify-center text-[10px] font-bold">o</span> 12K
+          <div className="flex items-center gap-1.5 text-[14px] font-medium">
+            <span className="w-5 h-5 border-[2px] border-[#A1A1AA] rounded-full flex items-center justify-center text-[10px] font-bold">o</span> 12K
           </div>
         </div>
       </div>
     </div>
     
     {/* Small Article 1 */}
-    <div className="bg-[#2a2a2c] rounded-2xl p-4 shadow-sm border border-[#3a3a3c]">
+    <div className="bg-[#222222] rounded-2xl p-4 shadow-sm border border-[#2C2C2E]">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2.5">
           <div className="w-6 h-6 rounded-full bg-black flex items-center justify-center text-[12px] font-bold border border-[#4a4a4c] text-white">V</div>
-          <span className="font-medium text-[15px]">Variety</span>
-          <span className="text-[#8e8e93] text-[15px]">7h</span>
+          <span className="font-semibold text-[14px] text-white">Variety</span>
+          <span className="text-[#A1A1AA] text-[14px]">7h</span>
         </div>
-        <button><MoreHorizontal className="w-5 h-5 text-[#8e8e93]" /></button>
+        <button><MoreHorizontal className="w-5 h-5 text-[#A1A1AA]" /></button>
       </div>
       <div className="flex gap-4">
         <div className="flex-1">
-          <h2 className="font-bold text-[19px] leading-[1.25] mb-5 text-[#f2f2f7]">Penelope Cruz Reveals She Was Warned of Brain Aneurysm Mid-Shoot on Cannes Favorite 'The Black Ball': 'I Thought I Was About to Die'</h2>
-          <div className="flex items-center gap-7 text-[#8e8e93]">
-            <button><MessageCircle className="w-[22px] h-[22px]" /></button>
-            <button><Bookmark className="w-[22px] h-[22px]" /></button>
-            <button><Share className="w-[22px] h-[22px]" /></button>
+          <h2 className="font-semibold text-[18px] leading-[1.3] mb-5 text-[#f2f2f7]">Penelope Cruz Reveals She Was Warned of Brain Aneurysm Mid-Shoot on Cannes Favorite 'The Black Ball': 'I Thought I Was About to Die'</h2>
+          <div className="flex items-center gap-6 text-[#A1A1AA]">
+            <button><MessageCircle className="w-[20px] h-[20px]" /></button>
+            <button><Bookmark className="w-[20px] h-[20px]" /></button>
+            <button><Share className="w-[20px] h-[20px]" /></button>
           </div>
         </div>
         <div className="w-[88px] h-[88px] bg-black rounded-xl shrink-0 overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" className="w-full h-full object-cover opacity-90" alt="Penelope Cruz" />
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" className="w-full h-full object-cover" alt="Penelope Cruz" />
+        </div>
+      </div>
+    </div>
+
+    {/* Small Article 2 */}
+    <div className="bg-[#222222] rounded-2xl p-4 shadow-sm border border-[#2C2C2E]">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2.5">
+          <div className="w-6 h-6 rounded-full bg-black flex items-center justify-center text-[12px] font-bold border border-[#4a4a4c] text-white">V</div>
+          <span className="font-semibold text-[14px] text-white">Variety</span>
+          <span className="text-[#A1A1AA] text-[14px]">13h</span>
+        </div>
+        <button><MoreHorizontal className="w-5 h-5 text-[#A1A1AA]" /></button>
+      </div>
+      <div className="flex gap-4">
+        <div className="flex-1">
+          <h2 className="font-semibold text-[18px] leading-[1.3] mb-5 text-[#f2f2f7]">Quentin Tarantino Butted Heads With Brad Pitt While Filming 'Once Upon a Time... in Hollywood': 'You'll Be Dead in This Business'</h2>
+          <div className="flex items-center gap-6 text-[#A1A1AA]">
+            <button><MessageCircle className="w-[20px] h-[20px]" /></button>
+            <button><Bookmark className="w-[20px] h-[20px]" /></button>
+            <button><Share className="w-[20px] h-[20px]" /></button>
+          </div>
+        </div>
+        <div className="w-[88px] h-[88px] bg-black rounded-xl shrink-0 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1605784401368-5af1d3e6fb84?w=100&h=100&fit=crop" className="w-full h-full object-cover" alt="Tarantino" />
         </div>
       </div>
     </div>
@@ -131,27 +156,23 @@ const Feed = () => (
 );
 
 const BottomNav = ({ activeTab, onTabChange }: { activeTab: string, onTabChange: (tab: string) => void }) => (
-  <div className="fixed bottom-0 left-0 right-0 w-full bg-[#1c1c1e] border-t border-[#3a3a3c] pb-safe pt-2 px-6 flex justify-between items-center z-50">
-    <div className="w-full max-w-md mx-auto flex justify-between items-center px-4 pb-2">
-      <button onClick={() => onTabChange('home')} className={`flex flex-col items-center gap-1 ${activeTab === 'home' ? 'text-[#af79ff]' : 'text-[#8e8e93]'}`}>
-        <div className={`p-1.5 rounded-full ${activeTab === 'home' ? 'bg-[#7d2eff]/20' : ''}`}>
-          <Home className="w-6 h-6" fill={activeTab === 'home' ? 'currentColor' : 'none'} />
-        </div>
-        <span className="text-[11px] font-medium">Home</span>
-      </button>
-      <button onClick={() => onTabChange('top')} className={`flex flex-col items-center gap-1 ${activeTab === 'top' ? 'text-[#af79ff]' : 'text-[#8e8e93]'}`}>
-        <div className="p-1.5"><Globe className="w-6 h-6" /></div>
-        <span className="text-[11px] font-medium">Top stories</span>
-      </button>
-      <button onClick={() => onTabChange('notifications')} className={`flex flex-col items-center gap-1 ${activeTab === 'notifications' ? 'text-[#af79ff]' : 'text-[#8e8e93]'}`}>
-        <div className="p-1.5"><Bell className="w-6 h-6" /></div>
-        <span className="text-[11px] font-medium">Notifications</span>
-      </button>
-      <button onClick={() => onTabChange('profile')} className={`flex flex-col items-center gap-1 ${activeTab === 'profile' ? 'text-[#af79ff]' : 'text-[#8e8e93]'}`}>
-        <div className="p-1.5"><User className="w-6 h-6" /></div>
-        <span className="text-[11px] font-medium">Profile</span>
-      </button>
-    </div>
+  <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-[360px] bg-[#222222]/95 backdrop-blur-xl rounded-[32px] px-2 py-2 flex justify-between items-center border border-[#333333] shadow-2xl z-50">
+    <button onClick={() => onTabChange('home')} className={`flex-1 py-1.5 flex flex-col items-center gap-1 ${activeTab === 'home' ? 'text-[#7d2eff] bg-[#333333] rounded-[24px]' : 'text-[#A1A1AA]'}`}>
+      <Home className="w-[22px] h-[22px]" fill={activeTab === 'home' ? 'currentColor' : 'none'} strokeWidth={activeTab === 'home' ? 2 : 2.5} />
+      <span className="text-[10px] font-semibold">Home</span>
+    </button>
+    <button onClick={() => onTabChange('top')} className={`flex-1 py-1.5 flex flex-col items-center gap-1 ${activeTab === 'top' ? 'text-[#7d2eff] bg-[#333333] rounded-[24px]' : 'text-[#A1A1AA]'}`}>
+      <Globe className="w-[22px] h-[22px]" strokeWidth={activeTab === 'top' ? 2.5 : 2} />
+      <span className="text-[10px] font-semibold">Top stories</span>
+    </button>
+    <button onClick={() => onTabChange('notifications')} className={`flex-1 py-1.5 flex flex-col items-center gap-1 ${activeTab === 'notifications' ? 'text-[#7d2eff] bg-[#333333] rounded-[24px]' : 'text-[#A1A1AA]'}`}>
+      <Bell className="w-[22px] h-[22px]" fill={activeTab === 'notifications' ? 'currentColor' : 'none'} strokeWidth={activeTab === 'notifications' ? 2 : 2.5} />
+      <span className="text-[10px] font-semibold">Notifications</span>
+    </button>
+    <button onClick={() => onTabChange('profile')} className={`flex-1 py-1.5 flex flex-col items-center gap-1 ${activeTab === 'profile' ? 'text-[#7d2eff] bg-[#333333] rounded-[24px]' : 'text-[#A1A1AA]'}`}>
+      <User className="w-[22px] h-[22px]" fill={activeTab === 'profile' ? 'currentColor' : 'none'} strokeWidth={activeTab === 'profile' ? 2 : 2.5} />
+      <span className="text-[10px] font-semibold">Profile</span>
+    </button>
   </div>
 );
 
