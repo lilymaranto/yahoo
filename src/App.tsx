@@ -474,7 +474,7 @@ const NotificationsTab = ({ userId }: { userId: string }) => {
           <button
             type="button"
             onClick={() => brazeLogEvent('clicked_primer')}
-            className="flex items-center gap-2.5 bg-[#7d2eff] text-white font-semibold text-[16px] px-7 py-3.5 rounded-full"
+            className="flex items-center gap-2.5 bg-[#7d2eff] active:bg-[#9a5cff] text-white font-semibold text-[16px] px-7 py-3.5 rounded-full transition-colors"
           >
             <BellRing className="w-[18px] h-[18px]" strokeWidth={2} />
             Turn on notifications
@@ -720,7 +720,7 @@ export default function App() {
   }, [handleNativeUserUpdate, applyUserChange]);
 
   return (
-    <div className="h-[100dvh] w-full max-w-md mx-auto bg-[#101719] flex flex-col relative font-sans text-white overflow-hidden">
+    <div className="h-[100dvh] w-full max-w-md mx-auto bg-[#101719] flex flex-col relative font-sans text-white overflow-x-hidden">
       {activeTab === 'home' && <Header scrolled={feedScrolled} />}
       {activeTab === 'home' && <Feed onScroll={handleFeedScroll} />}
       {activeTab === 'profile' && (
