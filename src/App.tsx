@@ -19,111 +19,111 @@ function getWelcomeFirstName(userId: string) {
 }
 
 const Header = () => (
-  <header className="sticky top-0 z-40 bg-[#121212] pt-12 pb-2 px-4 border-b border-gray-800">
-    <div className="flex justify-between items-center mb-4">
-      <div className="w-6"></div> {/* Spacer for centering */}
-      <h1 className="text-2xl font-bold italic tracking-tighter">
+  <header className="sticky top-0 z-40 bg-[#121212] pt-14 pb-0 border-b border-[#2a2a2a]">
+    <div className="flex justify-between items-center mb-4 px-4">
+      <div className="w-8"></div> {/* Spacer for centering */}
+      <h1 className="text-[28px] font-bold italic tracking-tighter">
         yahoo<span className="text-[#7d2eff]">!</span> news
       </h1>
-      <button className="p-2"><Search className="w-6 h-6" /></button>
+      <button className="p-2 -mr-2"><Search className="w-6 h-6 text-white" strokeWidth={2.5} /></button>
     </div>
     
-    <div className="flex gap-6 overflow-x-auto hide-scrollbar text-sm font-semibold text-gray-400">
-      <button className="text-white pb-2 border-b-2 border-[#7d2eff] whitespace-nowrap">For You</button>
-      <button className="pb-2 whitespace-nowrap">U.S. politics</button>
-      <button className="pb-2 whitespace-nowrap">Celebs</button>
-      <button className="pb-2 whitespace-nowrap">Recipes</button>
-      <button className="pb-2 whitespace-nowrap">Tech</button>
+    <div className="flex overflow-x-auto hide-scrollbar text-[15px] font-semibold text-[#8a8a8e] px-4">
+      <button className="text-white pb-3 mr-6 border-b-2 border-[#7d2eff] whitespace-nowrap">For You</button>
+      <button className="pb-3 mr-6 whitespace-nowrap">U.S. politics</button>
+      <button className="pb-3 mr-6 whitespace-nowrap">Celebs</button>
+      <button className="pb-3 mr-6 whitespace-nowrap">Recipes</button>
+      <button className="pb-3 whitespace-nowrap">Tech</button>
     </div>
   </header>
 );
 
 const Feed = () => (
-  <main className="flex-1 overflow-y-auto pb-24 pt-4 px-4 bg-[#121212] space-y-4">
+  <main className="flex-1 overflow-y-auto pb-28 pt-4 px-4 bg-[#121212] space-y-4">
     {/* Keep reading card */}
-    <div className="bg-[#1e1e1e] rounded-xl p-4">
-      <h2 className="font-semibold mb-4">Keep reading to level up.</h2>
-      <div className="w-full bg-gray-700 rounded-full h-1.5 mb-2">
-        <div className="bg-gray-400 h-1.5 rounded-full" style={{ width: '85%' }}></div>
+    <div className="bg-[#2a2a2c] rounded-2xl p-4 shadow-sm border border-[#3a3a3c]">
+      <h2 className="font-semibold mb-6 text-[17px]">Keep reading to level up.</h2>
+      <div className="w-full bg-[#4a4a4c] rounded-full h-1 mb-3">
+        <div className="bg-[#8e8e93] h-1 rounded-full" style={{ width: '85%' }}></div>
       </div>
-      <p className="text-sm text-gray-400">10 more reads to reach Seeker level.</p>
+      <p className="text-[15px] text-[#8e8e93]">10 more reads to reach Seeker level.</p>
     </div>
 
     {/* Morning Briefing card */}
-    <div className="bg-[#1e1e1e] rounded-xl p-4 relative">
-      <div className="flex items-center gap-2 mb-2 text-[#7d2eff] font-semibold text-sm">
-        <span className="text-lg">✦</span> Morning Briefing
+    <div className="bg-[#2a2a2c] rounded-2xl p-4 relative shadow-sm border border-[#3a3a3c]">
+      <div className="flex items-center gap-1.5 mb-3 text-[#af79ff] font-semibold text-[15px]">
+        <span className="text-lg leading-none mt-[-2px]">✦</span> Morning Briefing
       </div>
       <div className="flex gap-4">
         <div className="flex-1">
-          <h2 className="font-bold text-xl leading-tight mb-4">Colbert's final 'Late Show' episode airs, NASCAR's Kyle Busch dies at 41, and GOP divisions stall Trump agenda</h2>
+          <h2 className="font-bold text-[20px] leading-[1.25] mb-5 text-[#f2f2f7]">Colbert's final 'Late Show' episode airs, NASCAR's Kyle Busch dies at 41, and GOP divisions stall Trump agenda</h2>
           <div className="flex items-center gap-3">
-            <button className="w-10 h-10 bg-[#7d2eff] rounded-full flex items-center justify-center pl-1">
-              <Play className="w-5 h-5 text-white" fill="currentColor" />
+            <button className="w-[42px] h-[42px] bg-[#3a3a3c] rounded-full flex items-center justify-center pl-1 hover:bg-[#4a4a4c]">
+              <Play className="w-5 h-5 text-[#af79ff]" fill="currentColor" />
             </button>
-            <div className="flex-1 flex gap-1 items-end h-6">
-              {Array.from({length: 20}).map((_, i) => (
-                <div key={i} className="w-1 bg-gray-500 rounded-t" style={{height: `${Math.random() * 100}%`}}></div>
+            <div className="flex-1 flex gap-[2px] items-center h-8">
+              {Array.from({length: 24}).map((_, i) => (
+                <div key={i} className="w-[3px] bg-[#8e8e93] rounded-full" style={{height: `${Math.max(20, Math.random() * 100)}%`}}></div>
               ))}
             </div>
-            <span className="text-sm text-gray-400">02:44</span>
+            <span className="text-[14px] text-[#8e8e93]">02:44</span>
           </div>
         </div>
-        <div className="w-20 h-20 bg-gray-800 rounded-lg shrink-0 overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=80&h=80&fit=crop" className="w-full h-full object-cover" alt="Late Show" />
+        <div className="w-[88px] h-[88px] bg-black rounded-xl shrink-0 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=100&h=100&fit=crop" className="w-full h-full object-cover opacity-90" alt="Late Show" />
         </div>
       </div>
     </div>
 
     {/* Big Article Card */}
-    <div className="bg-[#1e1e1e] rounded-xl overflow-hidden">
-      <div className="h-48 bg-gray-800 w-full overflow-hidden">
-        <img src="https://images.unsplash.com/photo-1541872703868-3e4b097b399d?w=500&h=300&fit=crop" className="w-full h-full object-cover" alt="Kevin Warsh" />
+    <div className="bg-[#2a2a2c] rounded-2xl overflow-hidden shadow-sm border border-[#3a3a3c]">
+      <div className="h-[220px] bg-black w-full overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1541872703868-3e4b097b399d?w=600&h=400&fit=crop" className="w-full h-full object-cover opacity-90" alt="Kevin Warsh" />
       </div>
       <div className="p-4">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded-full bg-[#7d2eff] flex items-center justify-center text-xs font-bold">Y!</div>
-            <span className="font-semibold text-sm">Yahoo Finance</span>
-            <span className="text-gray-500 text-sm">42m</span>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2.5">
+            <div className="w-6 h-6 rounded-full bg-[#7d2eff] flex items-center justify-center text-[10px] font-black text-white">Y!</div>
+            <span className="font-medium text-[15px]">Yahoo Finance</span>
+            <span className="text-[#8e8e93] text-[15px]">42m</span>
           </div>
-          <button><MoreHorizontal className="w-5 h-5 text-gray-400" /></button>
+          <button><MoreHorizontal className="w-5 h-5 text-[#8e8e93]" /></button>
         </div>
-        <h2 className="font-bold text-xl leading-tight mb-4">Kevin Warsh sworn in as Fed chair as inflation worries raise the volume on possible rate hikes</h2>
-        <div className="flex items-center justify-between text-gray-400">
-          <div className="flex gap-6">
-            <button className="flex items-center gap-1.5"><MessageCircle className="w-5 h-5" /> 1.9K</button>
-            <button><Bookmark className="w-5 h-5" /></button>
-            <button><Share className="w-5 h-5" /></button>
+        <h2 className="font-bold text-[22px] leading-[1.2] mb-5 text-[#f2f2f7]">Kevin Warsh sworn in as Fed chair as inflation worries raise the volume on possible rate hikes</h2>
+        <div className="flex items-center justify-between text-[#8e8e93]">
+          <div className="flex gap-7">
+            <button className="flex items-center gap-2"><MessageCircle className="w-[22px] h-[22px]" /> <span className="text-[15px] font-medium">1.9K</span></button>
+            <button><Bookmark className="w-[22px] h-[22px]" /></button>
+            <button><Share className="w-[22px] h-[22px]" /></button>
           </div>
-          <div className="flex items-center gap-1.5 text-sm font-semibold">
-            <span className="w-4 h-4 border-2 border-gray-400 rounded-full flex items-center justify-center">O</span> 12K
+          <div className="flex items-center gap-1.5 text-[15px] font-medium">
+            <span className="w-5 h-5 border-[2.5px] border-[#8e8e93] rounded-full flex items-center justify-center text-[10px] font-bold">o</span> 12K
           </div>
         </div>
       </div>
     </div>
     
     {/* Small Article 1 */}
-    <div className="bg-[#1e1e1e] rounded-xl p-4">
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded-full bg-black flex items-center justify-center text-xs font-bold border border-gray-700">V</div>
-          <span className="font-semibold text-sm">Variety</span>
-          <span className="text-gray-500 text-sm">7h</span>
+    <div className="bg-[#2a2a2c] rounded-2xl p-4 shadow-sm border border-[#3a3a3c]">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2.5">
+          <div className="w-6 h-6 rounded-full bg-black flex items-center justify-center text-[12px] font-bold border border-[#4a4a4c] text-white">V</div>
+          <span className="font-medium text-[15px]">Variety</span>
+          <span className="text-[#8e8e93] text-[15px]">7h</span>
         </div>
-        <button><MoreHorizontal className="w-5 h-5 text-gray-400" /></button>
+        <button><MoreHorizontal className="w-5 h-5 text-[#8e8e93]" /></button>
       </div>
       <div className="flex gap-4">
         <div className="flex-1">
-          <h2 className="font-bold text-lg leading-tight mb-4">Penelope Cruz Reveals She Was Warned of Brain Aneurysm Mid-Shoot on Cannes Favorite 'The Black Ball': 'I Thought I Was About to Die'</h2>
-          <div className="flex items-center gap-6 text-gray-400">
-            <button><MessageCircle className="w-5 h-5" /></button>
-            <button><Bookmark className="w-5 h-5" /></button>
-            <button><Share className="w-5 h-5" /></button>
+          <h2 className="font-bold text-[19px] leading-[1.25] mb-5 text-[#f2f2f7]">Penelope Cruz Reveals She Was Warned of Brain Aneurysm Mid-Shoot on Cannes Favorite 'The Black Ball': 'I Thought I Was About to Die'</h2>
+          <div className="flex items-center gap-7 text-[#8e8e93]">
+            <button><MessageCircle className="w-[22px] h-[22px]" /></button>
+            <button><Bookmark className="w-[22px] h-[22px]" /></button>
+            <button><Share className="w-[22px] h-[22px]" /></button>
           </div>
         </div>
-        <div className="w-20 h-20 bg-gray-800 rounded-lg shrink-0 overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop" className="w-full h-full object-cover" alt="Penelope Cruz" />
+        <div className="w-[88px] h-[88px] bg-black rounded-xl shrink-0 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" className="w-full h-full object-cover opacity-90" alt="Penelope Cruz" />
         </div>
       </div>
     </div>
@@ -131,25 +131,27 @@ const Feed = () => (
 );
 
 const BottomNav = ({ activeTab, onTabChange }: { activeTab: string, onTabChange: (tab: string) => void }) => (
-  <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm bg-[#1e1e1e]/90 backdrop-blur-md rounded-full px-6 py-3 flex justify-between items-center border border-gray-800 shadow-2xl z-50">
-    <button onClick={() => onTabChange('home')} className={`flex flex-col items-center gap-1 ${activeTab === 'home' ? 'text-[#7d2eff]' : 'text-gray-400'}`}>
-      <div className={`p-1.5 rounded-full ${activeTab === 'home' ? 'bg-[#7d2eff]/20' : ''}`}>
-        <Home className="w-6 h-6" fill={activeTab === 'home' ? 'currentColor' : 'none'} />
-      </div>
-      <span className="text-[10px] font-semibold">Home</span>
-    </button>
-    <button onClick={() => onTabChange('top')} className={`flex flex-col items-center gap-1 ${activeTab === 'top' ? 'text-[#7d2eff]' : 'text-gray-400'}`}>
-      <div className="p-1.5"><Globe className="w-6 h-6" /></div>
-      <span className="text-[10px] font-semibold">Top stories</span>
-    </button>
-    <button onClick={() => onTabChange('notifications')} className={`flex flex-col items-center gap-1 ${activeTab === 'notifications' ? 'text-[#7d2eff]' : 'text-gray-400'}`}>
-      <div className="p-1.5"><Bell className="w-6 h-6" /></div>
-      <span className="text-[10px] font-semibold">Notifications</span>
-    </button>
-    <button onClick={() => onTabChange('profile')} className={`flex flex-col items-center gap-1 ${activeTab === 'profile' ? 'text-[#7d2eff]' : 'text-gray-400'}`}>
-      <div className="p-1.5"><User className="w-6 h-6" /></div>
-      <span className="text-[10px] font-semibold">Profile</span>
-    </button>
+  <div className="fixed bottom-0 left-0 right-0 w-full bg-[#1c1c1e] border-t border-[#3a3a3c] pb-safe pt-2 px-6 flex justify-between items-center z-50">
+    <div className="w-full max-w-md mx-auto flex justify-between items-center px-4 pb-2">
+      <button onClick={() => onTabChange('home')} className={`flex flex-col items-center gap-1 ${activeTab === 'home' ? 'text-[#af79ff]' : 'text-[#8e8e93]'}`}>
+        <div className={`p-1.5 rounded-full ${activeTab === 'home' ? 'bg-[#7d2eff]/20' : ''}`}>
+          <Home className="w-6 h-6" fill={activeTab === 'home' ? 'currentColor' : 'none'} />
+        </div>
+        <span className="text-[11px] font-medium">Home</span>
+      </button>
+      <button onClick={() => onTabChange('top')} className={`flex flex-col items-center gap-1 ${activeTab === 'top' ? 'text-[#af79ff]' : 'text-[#8e8e93]'}`}>
+        <div className="p-1.5"><Globe className="w-6 h-6" /></div>
+        <span className="text-[11px] font-medium">Top stories</span>
+      </button>
+      <button onClick={() => onTabChange('notifications')} className={`flex flex-col items-center gap-1 ${activeTab === 'notifications' ? 'text-[#af79ff]' : 'text-[#8e8e93]'}`}>
+        <div className="p-1.5"><Bell className="w-6 h-6" /></div>
+        <span className="text-[11px] font-medium">Notifications</span>
+      </button>
+      <button onClick={() => onTabChange('profile')} className={`flex flex-col items-center gap-1 ${activeTab === 'profile' ? 'text-[#af79ff]' : 'text-[#8e8e93]'}`}>
+        <div className="p-1.5"><User className="w-6 h-6" /></div>
+        <span className="text-[11px] font-medium">Profile</span>
+      </button>
+    </div>
   </div>
 );
 
@@ -227,9 +229,9 @@ export default function App() {
     }
   }, []);
 
-  const safeSyncToNative = useCallback((userId: string, reason = 'manual') => {
+  const safeSyncToNative = useCallback((userId: string, reason: 'manual' | 'default' | 'restore' | 'fallback' | 'admin' = 'manual') => {
     try {
-      syncUserToNative(userId, reason);
+      syncUserToNative(userId, reason as any);
     } catch (error) {
       console.warn('DemoBridge setUser failed', error);
     }
