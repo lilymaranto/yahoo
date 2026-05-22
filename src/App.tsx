@@ -4,8 +4,8 @@ import { startWebSession, setUser as syncUserToNative, listenForNative } from '.
 import { brazeChangeUser, brazeLogEvent, subscribeToContentCards, logContentCardImpressions, logContentCardClick, dismissContentCard } from './braze';
 import personaMap from '../solcon-starter/persona-map.json';
 
-const CONFIG_ID = 'yahoo';
-const DEFAULT_USER_ID = (personaMap as any).defaultUserId || (personaMap as any).personas?.[0]?.userId || 'us1';
+const CONFIG_ID = 'yahoo1';
+const DEFAULT_USER_ID = 'anon123';
 
 
 // Waveform bar heights (fixed so they don't re-render randomly)
