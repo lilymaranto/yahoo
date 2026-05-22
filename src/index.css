@@ -1,18 +1,204 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@source "../index.html";
+@source "./**/*.{js,ts,jsx,tsx}";
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
 
 @layer base {
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #101719;
+    color: white;
+  }
+  button {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+  }
+  button:focus,
+  button:focus-visible {
+    outline: none;
+    box-shadow: none;
   }
 }
 
-/* Custom scrollbar for horizontal scrolling tabs */
+/* Horizontal category tabs */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+.category-tabs {
+  display: flex;
+  overflow-x: auto;
+  gap: 1.5rem;
+  padding: 0 1rem;
+  font-size: 17px;
+  font-weight: 600;
+  color: #8e8e93;
+  -webkit-overflow-scrolling: touch;
+}
+
+.category-tab {
+  flex-shrink: 0;
+  padding-bottom: 0.75rem;
+  white-space: nowrap;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #8e8e93;
+}
+
+.category-tab--active {
+  color: #ffffff;
+  border-bottom-color: #be96ff;
+}
+
+/* Article / feed cards */
+.feed-card {
+  background-color: #1c1c1e;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.feed-card--padded {
+  padding: 1rem;
+}
+
+.feed-card-body {
+  padding: 1rem;
+}
+
+.thumb-image {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  align-self: flex-start;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #000;
+}
+
+.feed-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem 1rem;
+}
+
+.feed-stack > * {
+  flex: 0 0 auto;
+  height: auto;
+}
+
+/* Side-by-side hero articles (Kevin Warsh + The Hill) */
+.featured-carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: 1rem;
+  -webkit-overflow-scrolling: touch;
+  gap: 0.75rem;
+  align-items: flex-start;
+  width: calc(100% + 2rem);
+  margin-left: -1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.featured-carousel .feed-card {
+  flex: 0 0 88%;
+  width: 88%;
+  max-width: 88%;
+  scroll-snap-align: start;
+}
+
+.featured-carousel .feed-card-hero {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+
+.featured-carousel .feed-card-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Keep-reading + Sign-in promo carousel */
+.promo-carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: 1rem;
+  -webkit-overflow-scrolling: touch;
+  gap: 0.75rem;
+  width: calc(100% + 2rem);
+  margin-left: -1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.promo-card {
+  flex: 0 0 91%;
+  width: 91%;
+  scroll-snap-align: start;
+}
+
+/* Compact inner padding for promo cards (~1/3 height of hero cards) */
+.promo-card-body {
+  padding: 0.6rem 0.75rem;
+  height: 100px;
+}
+
+/* Floating bottom nav */
+.bottom-nav-wrap {
+  flex-shrink: 0;
+  padding: 0.375rem 1rem 2rem;
+  background-color: #101719;
+}
+
+.bottom-nav-bar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0.5rem 0.375rem;
+  border-radius: 9999px;
+  background: rgba(44, 44, 46, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 58px;
+  padding: 0.375rem 0.625rem;
+  border-radius: 9999px;
+  color: #8e8e93;
+  background: transparent;
+}
+
+.bottom-nav-item--active {
+  color: #af79ff;
+  background: rgba(125, 46, 255, 0.22);
+}
+
+.bottom-nav-item span {
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
 }

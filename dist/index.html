@@ -5,8 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta name="theme-color" content="#121212" />
     <title>Yahoo News</title>
-    <script type="module" crossorigin src="/assets/index-e6xPjjjb.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-1HWXeuzl.css">
+    <!-- Braze Web SDK -->
+    <script src="https://js.appboycdn.com/web-sdk/5.6/braze.min.js"></script>
+    <script>
+      (function () {
+        if (!window.braze) return;
+        braze.initialize('7ea48369-1551-4a9e-b054-d09b40648ef1', {
+          baseUrl: 'sdk.iad-03.braze.com',
+          enableLogging: false,
+        });
+        braze.changeUser('anon123');
+        braze.openSession();
+        window.__brazeReady = true;
+      })();
+    </script>
+    <script type="module" crossorigin src="/assets/index-9Z9gfX4n.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DPZo3R1N.css">
   </head>
   <body class="bg-[#121212] text-white overflow-hidden">
     <div id="root"></div>
