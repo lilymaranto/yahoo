@@ -212,7 +212,7 @@ const Feed = ({ onScroll }: { onScroll: React.UIEventHandler<HTMLElement> }) => 
   }, []);
 
   return (
-  <main className="flex-1 overflow-y-auto bg-[#101719] feed-stack" onScroll={onScroll}>
+  <main className="flex-1 overflow-y-auto overflow-x-hidden hide-scrollbar bg-[#101719] feed-stack" onScroll={onScroll}>
 
     {/* Morning Briefing card */}
     <div className="feed-card feed-card--padded">
@@ -381,7 +381,7 @@ const STORY_IMAGES = [
 ];
 
 const TopStoriesTab = () => (
-  <div className="flex-1 overflow-y-auto bg-[#101719] feed-stack">
+  <div className="flex-1 overflow-y-auto overflow-x-hidden hide-scrollbar bg-[#101719] feed-stack">
     {/* Page header */}
     <div className="flex items-center justify-center pt-14 pb-2" style={{ marginBottom: '-0.25rem' }}>
       <span className="text-[17px] font-semibold text-white">Top stories</span>
@@ -448,7 +448,7 @@ const NotificationsTab = ({ userId }: { userId: string }) => {
   }, []);
 
   return (
-    <div className="flex-1 bg-[#101719] flex flex-col overflow-y-auto pb-32">
+    <div className="flex-1 bg-[#101719] flex flex-col overflow-y-auto overflow-x-hidden hide-scrollbar pb-32">
       {/* Page header */}
       <div className="flex items-center justify-between px-4 pt-14 pb-4">
         <div className="w-10" />
@@ -583,7 +583,7 @@ const ProfileView = ({ userId, onChangeUser }: { userId: string; onChangeUser: (
   };
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#101719] relative">
+    <div className="flex-1 overflow-y-auto overflow-x-hidden hide-scrollbar bg-[#101719] relative">
       {/* Page header */}
       <div className="flex items-center justify-between px-4 pt-14 pb-5">
         <div className="w-10" />
