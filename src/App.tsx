@@ -193,6 +193,7 @@ const ArticleActions = ({ showCount }: { showCount?: string }) => (
 const Feed = ({ onScroll }: { onScroll: React.UIEventHandler<HTMLElement> }) => {
   const [signInDismissed, setSignInDismissed] = React.useState(false);
   const [homeCards, setHomeCards] = useState<any[]>([]);
+  const promoCarouselRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Slight delay to ensure Braze is initialized
@@ -200,6 +201,11 @@ const Feed = ({ onScroll }: { onScroll: React.UIEventHandler<HTMLElement> }) => 
       subscribeToContentCards('home', (cards) => {
         setHomeCards(cards);
         logContentCardImpressions(cards);
+        
+        // Ensure the newly inserted cards are immediately visible (snaps scroll to the left)
+        if (cards.length > 0 && promoCarouselRef.current) {
+          promoCarouselRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        }
       });
     }, 500);
     return () => clearTimeout(timer);
@@ -281,7 +287,7 @@ const Feed = ({ onScroll }: { onScroll: React.UIEventHandler<HTMLElement> }) => 
     </div>
 
     {/* Keep reading + Sign in — compact horizontally scrollable promo row */}
-    <div className="promo-carousel hide-scrollbar">
+    <div className="promo-carousel hide-scrollbar" ref={promoCarouselRef}>
       {homeCards.map(card => (
         <div key={card.id} className="promo-card">
           <PromoContentCard card={card} />
