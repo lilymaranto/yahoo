@@ -13,6 +13,7 @@
         braze.initialize('7ea48369-1551-4a9e-b054-d09b40648ef1', {
           baseUrl: 'sdk.iad-03.braze.com',
           enableLogging: false,
+          allowUserSuppliedJavascript: true,
         });
         braze.changeUser('anon123');
         braze.openSession();
