@@ -5,7 +5,14 @@ import { brazeChangeUser, brazeLogEvent, subscribeToContentCards, logContentCard
 import personaMap from '../solcon-starter/persona-map.json';
 
 const CONFIG_ID = 'yahoo1';
-const DEFAULT_USER_ID = 'anon123';
+const getInitialUserId = () => {
+  try {
+    return localStorage.getItem('yahoo_saved_user') || 'anon123';
+  } catch {
+    return 'anon123';
+  }
+};
+const DEFAULT_USER_ID = getInitialUserId();
 
 
 // Waveform bar heights (fixed so they don't re-render randomly)
@@ -412,7 +419,7 @@ const TopStoriesTab = () => (
   </div>
 );
 
-const NotificationCard = ({ title, image, time = '13h', onClick }: { title: string, image: string, time?: string, onClick?: () => void }) => (
+const NotificationCard = ({ title, image, time = '13h', onClick }: any) => (
   <div className="bg-[#1C1C1E] rounded-2xl px-4 py-3.5 cursor-pointer" onClick={onClick}>
     <div className="flex items-start gap-3">
       <p className="flex-1 text-[15px] text-white leading-[1.35] font-medium">
@@ -684,6 +691,7 @@ export default function App() {
     const trimmed = String(incomingUserId ?? '').trim();
     if (!trimmed) return;
     setCurrentUserId(trimmed);
+    try { localStorage.setItem('yahoo_saved_user', trimmed); } catch(e) {}
     latestSyncRequest.current = trimmed;
     brazeChangeUser(trimmed);
   }, []);
@@ -692,6 +700,7 @@ export default function App() {
     const trimmed = String(userId ?? '').trim();
     if (!trimmed) return;
     setCurrentUserId(trimmed);
+    try { localStorage.setItem('yahoo_saved_user', trimmed); } catch(e) {}
     latestSyncRequest.current = trimmed;
     
     if (reason === 'default') { safeStartWebSession(trimmed); }

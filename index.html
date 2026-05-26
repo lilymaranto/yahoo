@@ -15,7 +15,12 @@
           enableLogging: false,
           allowUserSuppliedJavascript: true,
         });
-        braze.changeUser('anon123');
+        braze.automaticallyShowInAppMessages();
+        var savedUser = 'anon123';
+        try {
+          savedUser = localStorage.getItem('yahoo_saved_user') || 'anon123';
+        } catch (e) {}
+        braze.changeUser(savedUser);
         braze.openSession();
         window.__brazeReady = true;
       })();
