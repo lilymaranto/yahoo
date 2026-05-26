@@ -671,6 +671,14 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [currentUserId, setCurrentUserId] = useState('');
   const [feedScrolled, setFeedScrolled] = useState(false);
+
+  const handleTabChange = useCallback((tab: string) => {
+    setActiveTab(tab);
+    if (tab === 'home') brazeLogEvent('clicked_home');
+    if (tab === 'top') brazeLogEvent('clicked_top_stories');
+    if (tab === 'notifications') brazeLogEvent('clicked_notifications');
+    if (tab === 'profile') brazeLogEvent('clicked_profile');
+  }, []);
   const handleFeedScroll = useCallback((e: React.UIEvent<HTMLElement>) => {
     setFeedScrolled((e.currentTarget as HTMLElement).scrollTop > 8);
   }, []);
@@ -739,7 +747,7 @@ export default function App() {
         <NotificationsTab userId={currentUserId} />
       )}
       {activeTab === 'top' && <TopStoriesTab />}
-      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+      <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />
     </div>
   );
 }
