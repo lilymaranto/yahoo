@@ -26,7 +26,7 @@ export function brazeChangeUser(userId: string) {
       baseUrl: 'sdk.iad-03.braze.com',
       enableLogging: false,
       allowUserSuppliedJavascript: true,
-      minimumIntervalBetweenTriggerActionsInSeconds: 0,
+      minimumIntervalBetweenTriggerActionsInSeconds: 1,
     });
     braze.automaticallyShowInAppMessages();
 
@@ -35,13 +35,14 @@ export function brazeChangeUser(userId: string) {
       try {
         const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
         
-        // Detect Braze 'close' or the custom dismiss event
+        // Detect Braze 'close' or the custom dismiss event or our manual override
         const isCloseCmd = data?.command === 'closeMessage' || data?.type === 'closeMessage';
         const isDismissEvent = data?.command === 'logCustomEvent' && data?.args?.[0] === 'push_primer_dismissed';
+        const isForceClose = data?.type === 'force_close_braze';
         
-        if (isCloseCmd || isDismissEvent) {
-          // Give the SDK 100ms to gracefully process before we aggressively purge the DOM
-          setTimeout(forceCleanupIAM, 100);
+        if (isCloseCmd || isDismissEvent || isForceClose) {
+          // Give the SDK 50ms to gracefully process before we aggressively purge the DOM
+          setTimeout(forceCleanupIAM, 50);
         }
       } catch (e) {
         // Ignore unparseable messages
