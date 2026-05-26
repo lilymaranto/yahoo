@@ -3,9 +3,24 @@
 
 const sdk = () => (window as any).braze ?? null;
 
+let isInitialized = false;
+
 export function brazeChangeUser(userId: string) {
-  sdk()?.changeUser(userId);
-  sdk()?.openSession();
+  const braze = sdk();
+  if (!braze) return;
+
+  if (!isInitialized) {
+    braze.initialize('7ea48369-1551-4a9e-b054-d09b40648ef1', {
+      baseUrl: 'sdk.iad-03.braze.com',
+      enableLogging: false,
+      allowUserSuppliedJavascript: true,
+    });
+    braze.automaticallyShowInAppMessages();
+    isInitialized = true;
+  }
+
+  braze.changeUser(userId);
+  braze.openSession();
 }
 
 export function brazeLogEvent(eventName: string, properties?: Record<string, unknown>) {

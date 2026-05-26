@@ -7,7 +7,7 @@ import personaMap from '../solcon-starter/persona-map.json';
 const CONFIG_ID = 'yahoo1';
 const getInitialUserId = () => {
   try {
-    return localStorage.getItem('yahoo_saved_user') || 'anon123';
+    return sessionStorage.getItem('yahoo_saved_user') || 'anon123';
   } catch {
     return 'anon123';
   }
@@ -699,7 +699,7 @@ export default function App() {
     const trimmed = String(incomingUserId ?? '').trim();
     if (!trimmed) return;
     setCurrentUserId(trimmed);
-    try { localStorage.setItem('yahoo_saved_user', trimmed); } catch(e) {}
+    try { sessionStorage.setItem('yahoo_saved_user', trimmed); } catch(e) {}
     latestSyncRequest.current = trimmed;
     brazeChangeUser(trimmed);
   }, []);
@@ -708,7 +708,7 @@ export default function App() {
     const trimmed = String(userId ?? '').trim();
     if (!trimmed) return;
     setCurrentUserId(trimmed);
-    try { localStorage.setItem('yahoo_saved_user', trimmed); } catch(e) {}
+    try { sessionStorage.setItem('yahoo_saved_user', trimmed); } catch(e) {}
     latestSyncRequest.current = trimmed;
     
     if (reason === 'default') { safeStartWebSession(trimmed); }
