@@ -26,6 +26,7 @@ export function brazeChangeUser(userId: string) {
       baseUrl: 'sdk.iad-03.braze.com',
       enableLogging: false,
       allowUserSuppliedJavascript: true,
+      minimumIntervalBetweenTriggerActionsInSeconds: 0,
     });
     braze.automaticallyShowInAppMessages();
 
