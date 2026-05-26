@@ -5,6 +5,18 @@ const sdk = () => (window as any).braze ?? null;
 
 let isInitialized = false;
 
+function forceCleanupIAM() {
+  // Aggressively remove any stuck Braze overlays or iframes
+  const brazeElements = document.querySelectorAll('.ab-in-app-message-wrapper, iframe[name="braze-iframe"], iframe[src*="appboy"], iframe[src*="braze"]');
+  brazeElements.forEach(el => el.remove());
+  
+  // Reset any scroll locks or pointer-event locks injected by the SDK
+  document.body.style.overflow = '';
+  document.body.style.pointerEvents = '';
+  document.documentElement.style.overflow = '';
+  document.documentElement.style.pointerEvents = '';
+}
+
 export function brazeChangeUser(userId: string) {
   const braze = sdk();
   if (!braze) return;
@@ -16,6 +28,25 @@ export function brazeChangeUser(userId: string) {
       allowUserSuppliedJavascript: true,
     });
     braze.automaticallyShowInAppMessages();
+
+    // PWA-side safeguard: listen to internal iframe postMessages and force cleanup on dismiss
+    window.addEventListener('message', (event) => {
+      try {
+        const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+        
+        // Detect Braze 'close' or the custom dismiss event
+        const isCloseCmd = data?.command === 'closeMessage' || data?.type === 'closeMessage';
+        const isDismissEvent = data?.command === 'logCustomEvent' && data?.args?.[0] === 'push_primer_dismissed';
+        
+        if (isCloseCmd || isDismissEvent) {
+          // Give the SDK 100ms to gracefully process before we aggressively purge the DOM
+          setTimeout(forceCleanupIAM, 100);
+        }
+      } catch (e) {
+        // Ignore unparseable messages
+      }
+    });
+
     isInitialized = true;
   }
 
