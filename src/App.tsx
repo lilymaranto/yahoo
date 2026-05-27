@@ -198,24 +198,21 @@ const ArticleActions = ({ showCount }: { showCount?: string }) => (
   </div>
 );
 
-const Feed = ({ userId }: { userId: string }) => {
+const Feed = ({ homeCards }: { homeCards: any[] }) => {
   const [signInDismissed, setSignInDismissed] = React.useState(false);
-  const [homeCards, setHomeCards] = useState<any[]>([]);
   const promoCarouselRef = useRef<HTMLDivElement>(null);
+  const prevHomeCardIds = useRef('');
 
   useEffect(() => {
-    const unsubscribe = subscribeToContentCards('home', (cards) => {
-      setHomeCards(cards || []);
-      if (cards && cards.length > 0) {
-        logContentCardImpressions(cards);
-        // Ensure the newly inserted cards are immediately visible (snaps scroll to the left)
-        if (promoCarouselRef.current) {
-          promoCarouselRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-        }
+    const ids = (homeCards || []).map((c) => c.id).join('|');
+    if (ids && ids !== prevHomeCardIds.current) {
+      prevHomeCardIds.current = ids;
+      logContentCardImpressions(homeCards);
+      if (promoCarouselRef.current) {
+        promoCarouselRef.current.scrollTo({ left: 0, behavior: 'smooth' });
       }
-    });
-    return () => { unsubscribe(); };
-  }, []);
+    }
+  }, [homeCards]);
 
   return (
   <main className="feed-stack bg-[#101719]">
@@ -437,19 +434,17 @@ const NotificationCard = ({ title, image, time = '13h', onClick }: any) => (
   </div>
 );
 
-const NotificationsTab = ({ userId }: { userId: string }) => {
+const NotificationsTab = ({ userId, inboxCards }: { userId: string; inboxCards: any[] }) => {
   const isAnon = userId.toLowerCase().startsWith('anon');
-  const [inboxCards, setInboxCards] = useState<any[]>([]);
+  const prevInboxCardIds = useRef('');
 
   useEffect(() => {
-    const unsubscribe = subscribeToContentCards('inbox', (cards) => {
-      setInboxCards(cards || []);
-      if (cards && cards.length > 0) {
-        logContentCardImpressions(cards);
-      }
-    });
-    return () => { unsubscribe(); };
-  }, []);
+    const ids = (inboxCards || []).map((c) => c.id).join('|');
+    if (ids && ids !== prevInboxCardIds.current) {
+      prevInboxCardIds.current = ids;
+      logContentCardImpressions(inboxCards);
+    }
+  }, [inboxCards]);
 
   return (
     <div className="bg-[#101719] flex flex-col pb-32">
@@ -668,6 +663,21 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [currentUserId, setCurrentUserId] = useState('');
   const [feedScrolled, setFeedScrolled] = useState(false);
+  const [homeCards, setHomeCards] = useState<any[]>([]);
+  const [inboxCards, setInboxCards] = useState<any[]>([]);
+
+  useEffect(() => {
+    const unsubHome = subscribeToContentCards('home', (cards) => {
+      setHomeCards(cards || []);
+    });
+    const unsubInbox = subscribeToContentCards('inbox', (cards) => {
+      setInboxCards(cards || []);
+    });
+    return () => {
+      unsubHome();
+      unsubInbox();
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setFeedScrolled(window.scrollY > 8);
@@ -740,12 +750,12 @@ export default function App() {
   return (
     <div className="min-h-[100dvh] w-full max-w-md mx-auto bg-[#101719] flex flex-col relative font-sans text-white pb-[90px]">
       {activeTab === 'home' && <Header scrolled={feedScrolled} />}
-      {activeTab === 'home' && <Feed userId={currentUserId} />}
+      {activeTab === 'home' && <Feed homeCards={homeCards} />}
       {activeTab === 'profile' && (
         <ProfileView userId={currentUserId} onChangeUser={applyUserChange} />
       )}
       {activeTab === 'notifications' && (
-        <NotificationsTab userId={currentUserId} />
+        <NotificationsTab userId={currentUserId} inboxCards={inboxCards} />
       )}
       {activeTab === 'top' && <TopStoriesTab />}
       <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />
