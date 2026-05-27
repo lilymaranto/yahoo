@@ -3,11 +3,28 @@
  * Endpoint: https://soleng-caboodle-sheets-e2eca0cb7cdb.herokuapp.com/api/v1/0bQsV2En
  */
 
-export const CABOODLE_CARDS_URL =
-  'https://soleng-caboodle-sheets-e2eca0cb7cdb.herokuapp.com/api/v1/0bQsV2En';
+const CABOODLE_SLUG = '0bQsV2En';
+const CABOODLE_REMOTE_URL = `https://soleng-caboodle-sheets-e2eca0cb7cdb.herokuapp.com/api/v1/${CABOODLE_SLUG}`;
 
-/** Set from Caboodle config edit page if GET becomes protected. Public GET works without it today. */
+/** Same-origin proxy (Vite dev + Vercel /api/caboodle) — avoids browser CORS blocking keyed POST/GET. */
+export const CABOODLE_CARDS_URL =
+  typeof window !== 'undefined' ? `/api/caboodle/${CABOODLE_SLUG}` : CABOODLE_REMOTE_URL;
+
+const USE_CABOODLE_PROXY = typeof window !== 'undefined';
+
+/** Injected by proxy in browser; sent directly only for non-browser use. */
 export const CABOODLE_API_KEY = 'ck_647e85d86fef2d92b311956d611d1f4905451b367df417fc';
+
+function caboodleRequestHeaders(write = false): Record<string, string> {
+  const headers: Record<string, string> = { Accept: 'application/json' };
+  if (!USE_CABOODLE_PROXY && CABOODLE_API_KEY) {
+    headers['X-API-Key'] = CABOODLE_API_KEY;
+  }
+  if (write) {
+    headers['Content-Type'] = 'application/json';
+  }
+  return headers;
+}
 
 export const YAHOO_CONFIG_ID = 'yahoo2';
 
@@ -132,7 +149,9 @@ function normalizeBrazeCard(raw: unknown): ContentCard | null {
     extras = { ...(card.extras as Record<string, unknown>) };
   }
 
-  const location = String(extras.location ?? extras.Location ?? '')
+  const location = String(
+    extras.location ?? extras.Location ?? card.location ?? '',
+  )
     .trim()
     .toLowerCase();
   if (location !== 'home' && location !== 'inbox') return null;
@@ -157,10 +176,15 @@ function normalizeBrazeCard(raw: unknown): ContentCard | null {
   };
 }
 
+function quoteFilterValue(value: string): string {
+  const v = String(value ?? '').trim();
+  if (!v) return "''";
+  if (/[\s,'"]/.test(v)) return `'${v.replace(/'/g, "''")}'`;
+  return v;
+}
+
 function buildFilter(userId: string): string {
-  const uid = encodeURIComponent(userId);
-  const cfg = encodeURIComponent(YAHOO_CONFIG_ID);
-  return `(config_id[eq]${cfg}) AND (user_id[eq]${uid})`;
+  return `(config_id[eq]${quoteFilterValue(YAHOO_CONFIG_ID)}) AND (user_id[eq]${quoteFilterValue(userId)})`;
 }
 
 export async function fetchCaboodleCardsForUser(userId: string): Promise<ContentCard[]> {
@@ -172,14 +196,9 @@ export async function fetchCaboodleCardsForUser(userId: string): Promise<Content
     sort: 'sort[desc]updated_at',
   });
 
-  const headers: Record<string, string> = { Accept: 'application/json' };
-  if (CABOODLE_API_KEY) {
-    headers['X-API-Key'] = CABOODLE_API_KEY;
-  }
-
   try {
     const res = await fetch(`${CABOODLE_CARDS_URL}?${params.toString()}`, {
-      headers,
+      headers: caboodleRequestHeaders(),
       cache: 'no-store',
     });
     if (!res.ok) {
@@ -270,11 +289,7 @@ export async function syncNewPayloadCardsToCaboodle(
     const body = buildCaboodlePostPayload(trimmed, card);
     const res = await fetch(CABOODLE_CARDS_URL, {
       method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        'X-API-Key': CABOODLE_API_KEY,
-      },
+      headers: caboodleRequestHeaders(true),
       body: JSON.stringify(body),
     });
 

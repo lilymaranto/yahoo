@@ -121,7 +121,15 @@ function handleBrazePayload(rawCards: unknown[], userId: string) {
   if (!trimmed || trimmed !== currentBrazeUserId) return;
 
   const cards = normalizeBrazeCards(rawCards);
-  if (cards.length === 0) return;
+  if (cards.length === 0) {
+    if (Array.isArray(rawCards) && rawCards.length > 0) {
+      console.warn(
+        '[yahoo] Braze CC not synced — cards need extras.location (home|inbox) + title. Sample:',
+        rawCards[0],
+      );
+    }
+    return;
+  }
 
   applyCardUpdate(cards, { source: 'braze' });
   void syncNewPayloadCardsToCaboodle(trimmed, cards);
