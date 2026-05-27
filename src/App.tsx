@@ -203,25 +203,18 @@ const Feed = ({ userId }: { userId: string }) => {
   const promoCarouselRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Instantly clear old cards when user changes
-    setHomeCards([]);
-  }, [userId]);
-
-  useEffect(() => {
-    // Slight delay to ensure Braze is initialized
-    const timer = setTimeout(() => {
-      subscribeToContentCards('home', (cards) => {
-        setHomeCards(cards);
+    const unsubscribe = subscribeToContentCards('home', (cards) => {
+      setHomeCards(cards || []);
+      if (cards && cards.length > 0) {
         logContentCardImpressions(cards);
-        
         // Ensure the newly inserted cards are immediately visible (snaps scroll to the left)
-        if (cards.length > 0 && promoCarouselRef.current) {
+        if (promoCarouselRef.current) {
           promoCarouselRef.current.scrollTo({ left: 0, behavior: 'smooth' });
         }
-      });
-    }, 500);
-    return () => clearTimeout(timer);
-  }, []);
+      }
+    });
+    return () => unsubscribe();
+  }, [userId]);
 
   return (
   <main className="feed-stack bg-[#101719]">
@@ -448,21 +441,14 @@ const NotificationsTab = ({ userId }: { userId: string }) => {
   const [inboxCards, setInboxCards] = useState<any[]>([]);
 
   useEffect(() => {
-    // Instantly clear old cards when user changes
-    setInboxCards([]);
-  }, [userId]);
-
-  useEffect(() => {
-    let active = true;
-    const timer = setTimeout(() => {
-      subscribeToContentCards('inbox', (cards) => {
-        if (!active) return;
-        setInboxCards(cards);
+    const unsubscribe = subscribeToContentCards('inbox', (cards) => {
+      setInboxCards(cards || []);
+      if (cards && cards.length > 0) {
         logContentCardImpressions(cards);
-      });
-    }, 500);
-    return () => { active = false; clearTimeout(timer); };
-  }, []);
+      }
+    });
+    return () => unsubscribe();
+  }, [userId]);
 
   return (
     <div className="bg-[#101719] flex flex-col pb-32">
