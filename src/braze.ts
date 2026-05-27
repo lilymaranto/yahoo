@@ -4,6 +4,7 @@
 import {
   contentCardTitleKey,
   fetchCaboodleCardsForUser,
+  normalizeBrazeCards,
   syncNewPayloadCardsToCaboodle,
   type ContentCard,
 } from './caboodle';
@@ -114,23 +115,24 @@ function loadCaboodleCards(userId: string) {
   });
 }
 
+/** Every Braze CC payload path: update UI + POST new titles to Caboodle. */
+function handleBrazePayload(rawCards: unknown[], userId: string) {
+  const trimmed = String(userId ?? '').trim();
+  if (!trimmed || trimmed !== currentBrazeUserId) return;
+
+  const cards = normalizeBrazeCards(rawCards);
+  if (cards.length === 0) return;
+
+  applyCardUpdate(cards, { source: 'braze' });
+  void syncNewPayloadCardsToCaboodle(trimmed, cards);
+}
+
 function setupContentCardsSubscription(braze: any) {
   braze.subscribeToContentCardsUpdates((updates: any) => {
-    if (updates?.cards) {
-      const payloadCards = updates.cards as ContentCard[];
-      applyCardUpdate(payloadCards, { source: 'braze' });
-      if (currentBrazeUserId) {
-        void syncNewPayloadCardsToCaboodle(currentBrazeUserId, payloadCards);
-      }
+    if (updates?.cards && currentBrazeUserId) {
+      handleBrazePayload(updates.cards, currentBrazeUserId);
     }
   });
-
-  if (typeof braze.getCachedContentCards === 'function') {
-    const cached = braze.getCachedContentCards();
-    if (cached?.cards) {
-      applyCardUpdate(cached.cards as ContentCard[], { source: 'braze' });
-    }
-  }
 }
 
 function forceCleanupIAM() {
@@ -193,7 +195,7 @@ export function brazeChangeUser(userId: string) {
     if (braze.getCachedContentCards) {
       const cached = braze.getCachedContentCards();
       if (cached?.cards) {
-        applyCardUpdate(cached.cards as ContentCard[], { source: 'braze' });
+        handleBrazePayload(cached.cards, userId);
       }
     }
   }, 100);

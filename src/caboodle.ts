@@ -109,6 +109,54 @@ export function contentCardTitleKey(card: Pick<ContentCard, 'title' | 'extras'>)
   return normalizedTitle(card.title ?? fromExtras);
 }
 
+/** Map Braze SDK card objects into our ContentCard shape (title, location, etc.). */
+export function normalizeBrazeCards(rawCards: unknown[]): ContentCard[] {
+  if (!Array.isArray(rawCards)) return [];
+  return rawCards
+    .map((raw) => normalizeBrazeCard(raw))
+    .filter((c): c is ContentCard => c !== null);
+}
+
+function normalizeBrazeCard(raw: unknown): ContentCard | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const card = raw as Record<string, unknown>;
+
+  let extras: Record<string, unknown> = {};
+  if (typeof card.extras === 'string' && card.extras) {
+    try {
+      extras = JSON.parse(card.extras) as Record<string, unknown>;
+    } catch {
+      extras = {};
+    }
+  } else if (card.extras && typeof card.extras === 'object') {
+    extras = { ...(card.extras as Record<string, unknown>) };
+  }
+
+  const location = String(extras.location ?? extras.Location ?? '')
+    .trim()
+    .toLowerCase();
+  if (location !== 'home' && location !== 'inbox') return null;
+
+  const id = String(card.id ?? card.card_id ?? '').trim();
+  if (!id) return null;
+
+  const title = String(card.title ?? extras.title ?? card.cardDescription ?? '').trim();
+  if (!title) return null;
+
+  return {
+    id,
+    title,
+    description: String(card.description ?? card.cardDescription ?? extras.description ?? ''),
+    url: String(card.url ?? card.link ?? extras.url ?? ''),
+    linkText: String(
+      card.linkText ?? extras.linkText ?? extras.link_text ?? extras.LinkText ?? '',
+    ),
+    imageUrl: String(card.imageUrl ?? card.image ?? extras.image ?? ''),
+    dismissed: Boolean(card.dismissed),
+    extras: { ...extras, location },
+  };
+}
+
 function buildFilter(userId: string): string {
   const uid = encodeURIComponent(userId);
   const cfg = encodeURIComponent(YAHOO_CONFIG_ID);
@@ -202,14 +250,20 @@ export async function syncNewPayloadCardsToCaboodle(
   const existingCards = await fetchCaboodleCardsForUser(trimmed);
   const existingTitles = new Set(existingCards.map(contentCardTitleKey).filter(Boolean));
 
-  const toPost = payloadCards.filter((card) => {
+  const normalized = normalizeBrazeCards(payloadCards as unknown[]);
+  const toPost = normalized.filter((card) => {
     const titleKey = contentCardTitleKey(card);
     if (!titleKey) return false;
-    if (existingTitles.has(titleKey)) return false;
-
-    const location = String(card.extras?.location ?? card.extras?.Location ?? '').toLowerCase();
-    return location === 'home' || location === 'inbox';
+    return !existingTitles.has(titleKey);
   });
+
+  if (normalized.length > 0) {
+    console.info('[yahoo] Caboodle sync check:', {
+      userId: trimmed,
+      payloadCount: normalized.length,
+      newByTitle: toPost.length,
+    });
+  }
 
   let posted = 0;
   for (const card of toPost) {
@@ -232,6 +286,11 @@ export async function syncNewPayloadCardsToCaboodle(
 
     posted += 1;
     existingTitles.add(contentCardTitleKey(card));
+    console.info('[yahoo] Caboodle POST ok:', card.title);
+  }
+
+  if (posted > 0) {
+    console.info(`[yahoo] Caboodle: posted ${posted} row(s) for ${trimmed}`);
   }
 
   return posted;
