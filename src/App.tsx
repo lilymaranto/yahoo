@@ -4,7 +4,7 @@ import { startWebSession, setUser as syncUserToNative, listenForNative } from '.
 import { brazeChangeUser, brazeLogEvent, subscribeToContentCards, logContentCardImpressions, logContentCardClick, dismissContentCard } from './braze';
 import personaMap from '../solcon-starter/persona-map.json';
 
-const CONFIG_ID = 'yahoo1';
+const CONFIG_ID = 'yahoo2';
 const getInitialUserId = () => {
   try {
     return sessionStorage.getItem('yahoo_saved_user') || 'anon123';
@@ -16,6 +16,7 @@ const DEFAULT_USER_ID = getInitialUserId();
 
 
 // Waveform bar heights (fixed so they don't re-render randomly)
+
 const WAVEFORM = [30, 55, 70, 45, 85, 60, 40, 90, 55, 35, 75, 50, 65, 80, 45, 60, 35, 70, 55, 40, 80, 50, 65, 30, 30, 55, 70, 45, 85, 60, 40, 90, 55, 35, 75, 50, 65, 80, 45, 60, 35, 70, 55, 40, 80, 50, 65, 30];
 
 // Header: logo+search visible initially, slides away on scroll; tabs always pinned
