@@ -643,8 +643,8 @@ const ProfileView = ({ userId, onChangeUser }: { userId: string; onChangeUser: (
       {/* Settings bottom sheet */}
       {showSettings && (
         <>
-          <div className="absolute inset-0 bg-black/60 z-40" onClick={() => setShowSettings(false)} />
-          <div className="absolute bottom-0 left-0 right-0 bg-[#1C1C1E] rounded-t-[28px] px-6 pt-4 pb-10 z-50">
+          <div className="fixed inset-0 bg-black/60 z-40" onClick={() => setShowSettings(false)} />
+          <div className="fixed bottom-0 left-0 right-0 bg-[#1C1C1E] rounded-t-[28px] px-6 pt-4 pb-10 z-50">
             <div className="w-10 h-1 bg-[#3A3A3C] rounded-full mx-auto mb-6" />
             <h3 className="text-[17px] font-semibold text-white mb-5">Change User ID</h3>
             <form onSubmit={handleSubmit} className="flex flex-col gap-3">
