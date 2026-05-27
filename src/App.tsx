@@ -20,7 +20,7 @@ const WAVEFORM = [30, 55, 70, 45, 85, 60, 40, 90, 55, 35, 75, 50, 65, 80, 45, 60
 
 // Header: logo+search visible initially, slides away on scroll; tabs always pinned
 const Header = ({ scrolled }: { scrolled: boolean }) => (
-  <header className="shrink-0 bg-[#101719] pt-12 pb-0">
+  <header className="sticky top-0 z-40 bg-[#101719] pt-12 pb-0">
     <div
       style={{
         maxHeight: scrolled ? 0 : 72,
@@ -197,7 +197,7 @@ const ArticleActions = ({ showCount }: { showCount?: string }) => (
   </div>
 );
 
-const Feed = ({ onScroll }: { onScroll: React.UIEventHandler<HTMLElement> }) => {
+const Feed = () => {
   const [signInDismissed, setSignInDismissed] = React.useState(false);
   const [homeCards, setHomeCards] = useState<any[]>([]);
   const promoCarouselRef = useRef<HTMLDivElement>(null);
@@ -219,7 +219,7 @@ const Feed = ({ onScroll }: { onScroll: React.UIEventHandler<HTMLElement> }) => 
   }, []);
 
   return (
-  <main className="flex-1 overflow-y-auto overflow-x-hidden hide-scrollbar bg-[#101719] feed-stack" onScroll={onScroll}>
+  <main className="feed-stack bg-[#101719]">
 
     {/* Morning Briefing card */}
     <div className="feed-card feed-card--padded">
@@ -388,7 +388,7 @@ const STORY_IMAGES = [
 ];
 
 const TopStoriesTab = () => (
-  <div className="flex-1 overflow-y-auto overflow-x-hidden hide-scrollbar bg-[#101719] feed-stack">
+  <div className="feed-stack bg-[#101719]">
     {/* Page header */}
     <div className="flex items-center justify-center pt-14 pb-2" style={{ marginBottom: '-0.25rem' }}>
       <span className="text-[17px] font-semibold text-white">Top stories</span>
@@ -455,7 +455,7 @@ const NotificationsTab = ({ userId }: { userId: string }) => {
   }, []);
 
   return (
-    <div className="flex-1 bg-[#101719] flex flex-col overflow-y-auto overflow-x-hidden hide-scrollbar pb-32">
+    <div className="bg-[#101719] flex flex-col pb-32">
       {/* Page header */}
       <div className="flex items-center justify-between px-4 pt-14 pb-4">
         <div className="w-10" />
@@ -549,7 +549,7 @@ const BottomNav = ({ activeTab, onTabChange }: { activeTab: string; onTabChange:
   ];
 
   return (
-    <div className="bottom-nav-wrap">
+    <div className="bottom-nav-wrap fixed bottom-0 left-0 right-0 max-w-md mx-auto z-50">
       <div className="bottom-nav-bar">
         {tabs.map(({ id, label, Icon }) => {
           const active = activeTab === id;
@@ -590,7 +590,7 @@ const ProfileView = ({ userId, onChangeUser }: { userId: string; onChangeUser: (
   };
 
   return (
-    <div className="flex-1 overflow-y-auto overflow-x-hidden hide-scrollbar bg-[#101719] relative">
+    <div className="bg-[#101719] relative pb-32">
       {/* Page header */}
       <div className="flex items-center justify-between px-4 pt-14 pb-5">
         <div className="w-10" />
@@ -672,15 +672,19 @@ export default function App() {
   const [currentUserId, setCurrentUserId] = useState('');
   const [feedScrolled, setFeedScrolled] = useState(false);
 
+  useEffect(() => {
+    const handleScroll = () => setFeedScrolled(window.scrollY > 8);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const handleTabChange = useCallback((tab: string) => {
     setActiveTab(tab);
+    window.scrollTo(0, 0);
     if (tab === 'home') brazeLogEvent('clicked_home');
     if (tab === 'top') brazeLogEvent('clicked_top_stories');
     if (tab === 'notifications') brazeLogEvent('clicked_notifications');
     if (tab === 'profile') brazeLogEvent('clicked_profile');
-  }, []);
-  const handleFeedScroll = useCallback((e: React.UIEvent<HTMLElement>) => {
-    setFeedScrolled((e.currentTarget as HTMLElement).scrollTop > 8);
   }, []);
   const nativeListenerRegistered = useRef(false);
   const latestSyncRequest = useRef('');
@@ -737,9 +741,9 @@ export default function App() {
   }, [handleNativeUserUpdate, applyUserChange]);
 
   return (
-    <div className="h-[100dvh] w-full max-w-md mx-auto bg-[#101719] flex flex-col relative font-sans text-white overflow-x-hidden">
+    <div className="min-h-[100dvh] w-full max-w-md mx-auto bg-[#101719] flex flex-col relative font-sans text-white pb-[90px]">
       {activeTab === 'home' && <Header scrolled={feedScrolled} />}
-      {activeTab === 'home' && <Feed onScroll={handleFeedScroll} />}
+      {activeTab === 'home' && <Feed />}
       {activeTab === 'profile' && (
         <ProfileView userId={currentUserId} onChangeUser={applyUserChange} />
       )}
