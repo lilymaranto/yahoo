@@ -5,6 +5,34 @@ const sdk = () => (window as any).braze ?? null;
 
 let isInitialized = false;
 
+let latestHomeCards: any[] = [];
+let latestInboxCards: any[] = [];
+const homeListeners = new Set<(cards: any[]) => void>();
+const inboxListeners = new Set<(cards: any[]) => void>();
+
+function applyCardUpdate(cards: any[]) {
+  if (!cards || !Array.isArray(cards)) return;
+  latestHomeCards = cards.filter(c => String(c?.extras?.location ?? c?.extras?.Location ?? '').toLowerCase() === 'home' && !c.dismissed);
+  latestInboxCards = cards.filter(c => String(c?.extras?.location ?? c?.extras?.Location ?? '').toLowerCase() === 'inbox' && !c.dismissed);
+  homeListeners.forEach(cb => cb([...latestHomeCards]));
+  inboxListeners.forEach(cb => cb([...latestInboxCards]));
+}
+
+function setupContentCardsSubscription(braze: any) {
+  braze.subscribeToContentCardsUpdates((updates: any) => {
+    if (updates && updates.cards) {
+      applyCardUpdate(updates.cards);
+    }
+  });
+
+  if (typeof braze.getCachedContentCards === "function") {
+    const cached = braze.getCachedContentCards();
+    if (cached?.cards) {
+      applyCardUpdate(cached.cards);
+    }
+  }
+}
+
 function forceCleanupIAM() {
   // Aggressively remove any stuck Braze overlays or iframes
   const brazeElements = document.querySelectorAll('.ab-in-app-message-wrapper, iframe[name="braze-iframe"], iframe[src*="appboy"], iframe[src*="braze"]');
@@ -30,6 +58,8 @@ export function brazeChangeUser(userId: string) {
     });
     braze.automaticallyShowInAppMessages();
 
+    setupContentCardsSubscription(braze);
+
     // PWA-side safeguard: listen to internal iframe postMessages and force cleanup on dismiss
     window.addEventListener('message', (event) => {
       try {
@@ -54,6 +84,12 @@ export function brazeChangeUser(userId: string) {
 
   braze.changeUser(userId);
   braze.openSession();
+  
+  latestHomeCards = [];
+  latestInboxCards = [];
+  homeListeners.forEach(cb => cb([]));
+  inboxListeners.forEach(cb => cb([]));
+  
   braze.requestContentCardsRefresh();
 }
 
@@ -62,31 +98,31 @@ export function brazeLogEvent(eventName: string, properties?: Record<string, unk
 }
 
 export function subscribeToContentCards(location: string, callback: (cards: any[]) => void) {
-  const braze = sdk();
-  if (!braze) return;
-
-  const handleUpdate = (updates: any) => {
-    const filtered = updates.cards.filter((c: any) => {
-      const loc = String(c?.extras?.location ?? c?.extras?.Location ?? '').toLowerCase();
-      return loc === location && !c.dismissed;
-    });
-    callback(filtered);
-  };
-
-  braze.subscribeToContentCardsUpdates(handleUpdate);
-
-  if (braze.getCachedContentCards) {
-    const cached = braze.getCachedContentCards();
-    if (cached?.cards) {
-      handleUpdate(cached);
-    }
+  if (location === 'home') {
+    homeListeners.add(callback);
+    callback([...latestHomeCards]);
+    return () => { homeListeners.delete(callback); };
+  } else if (location === 'inbox') {
+    inboxListeners.add(callback);
+    callback([...latestInboxCards]);
+    return () => { inboxListeners.delete(callback); };
   }
-
-  braze.requestContentCardsRefresh();
+  return () => {};
 }
 
 export function dismissContentCard(card: any) {
-  sdk()?.logContentCardDismissal(card);
+  const braze = sdk();
+  if (!braze) return;
+  braze.logContentCardDismissal(card);
+  
+  // Optimistically remove from UI
+  if (String(card?.extras?.location ?? card?.extras?.Location ?? '').toLowerCase() === 'home') {
+    latestHomeCards = latestHomeCards.filter(c => c.id !== card.id);
+    homeListeners.forEach(cb => cb([...latestHomeCards]));
+  } else {
+    latestInboxCards = latestInboxCards.filter(c => c.id !== card.id);
+    inboxListeners.forEach(cb => cb([...latestInboxCards]));
+  }
 }
 
 export function logContentCardClick(card: any) {

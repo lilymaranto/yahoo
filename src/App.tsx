@@ -203,21 +203,17 @@ const Feed = ({ userId }: { userId: string }) => {
   const promoCarouselRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    let active = true;
-    const timer = setTimeout(() => {
-      subscribeToContentCards('home', (cards) => {
-        if (!active) return;
-        setHomeCards(cards || []);
-        if (cards && cards.length > 0) {
-          logContentCardImpressions(cards);
-          // Ensure the newly inserted cards are immediately visible (snaps scroll to the left)
-          if (promoCarouselRef.current) {
-            promoCarouselRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-          }
+    const unsubscribe = subscribeToContentCards('home', (cards) => {
+      setHomeCards(cards || []);
+      if (cards && cards.length > 0) {
+        logContentCardImpressions(cards);
+        // Ensure the newly inserted cards are immediately visible (snaps scroll to the left)
+        if (promoCarouselRef.current) {
+          promoCarouselRef.current.scrollTo({ left: 0, behavior: 'smooth' });
         }
-      });
-    }, 500);
-    return () => { active = false; clearTimeout(timer); };
+      }
+    });
+    return () => { unsubscribe(); };
   }, []);
 
   return (
@@ -445,17 +441,13 @@ const NotificationsTab = ({ userId }: { userId: string }) => {
   const [inboxCards, setInboxCards] = useState<any[]>([]);
 
   useEffect(() => {
-    let active = true;
-    const timer = setTimeout(() => {
-      subscribeToContentCards('inbox', (cards) => {
-        if (!active) return;
-        setInboxCards(cards || []);
-        if (cards && cards.length > 0) {
-          logContentCardImpressions(cards);
-        }
-      });
-    }, 500);
-    return () => { active = false; clearTimeout(timer); };
+    const unsubscribe = subscribeToContentCards('inbox', (cards) => {
+      setInboxCards(cards || []);
+      if (cards && cards.length > 0) {
+        logContentCardImpressions(cards);
+      }
+    });
+    return () => { unsubscribe(); };
   }, []);
 
   return (
