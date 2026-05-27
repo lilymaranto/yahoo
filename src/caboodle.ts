@@ -7,7 +7,7 @@ export const CABOODLE_CARDS_URL =
   'https://soleng-caboodle-sheets-e2eca0cb7cdb.herokuapp.com/api/v1/0bQsV2En';
 
 /** Set from Caboodle config edit page if GET becomes protected. Public GET works without it today. */
-export const CABOODLE_API_KEY = '';
+export const CABOODLE_API_KEY = 'ck_647e85d86fef2d92b311956d611d1f4905451b367df417fc';
 
 export const YAHOO_CONFIG_ID = 'yahoo2';
 
@@ -23,6 +23,10 @@ export type ContentCard = {
   dismissed: boolean;
   extras: Record<string, unknown>;
 };
+
+function normalizedTitle(value: unknown): string {
+  return String(value ?? '').trim().toLowerCase();
+}
 
 function rowTimestamp(row: CaboodleRow): number {
   const raw = row.updated_at ?? row.cached_at ?? '';
@@ -92,6 +96,12 @@ export function rowToContentCard(row: CaboodleRow): ContentCard | null {
   };
 }
 
+export function contentCardTitleKey(card: Pick<ContentCard, 'title' | 'id'>): string {
+  const title = normalizedTitle(card.title);
+  if (title) return title;
+  return String(card.id ?? '').trim().toLowerCase();
+}
+
 function buildFilter(userId: string): string {
   const uid = encodeURIComponent(userId);
   const cfg = encodeURIComponent(YAHOO_CONFIG_ID);
@@ -142,4 +152,80 @@ export async function fetchCaboodleCardsForUser(userId: string): Promise<Content
     console.warn('[yahoo] Caboodle fetch error:', err);
     return [];
   }
+}
+
+function buildCaboodlePostPayload(userId: string, card: ContentCard): Record<string, unknown> {
+  const nowIso = new Date().toISOString();
+  const location = String(card.extras?.location ?? card.extras?.Location ?? '').toLowerCase();
+
+  return {
+    id: `cc-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    config_id: YAHOO_CONFIG_ID,
+    user_id: userId,
+    location,
+    card_id: card.id,
+    title: card.title ?? '',
+    description: card.description ?? '',
+    url: card.url ?? '',
+    link_text: card.linkText ?? '',
+    extras: JSON.stringify(card.extras ?? {}),
+    expires_at: '',
+    image_url: card.imageUrl ?? '',
+    dismissed: false,
+    cached_at: nowIso,
+    updated_at: nowIso,
+  };
+}
+
+/**
+ * Persist payload cards that do not yet exist in Caboodle by title.
+ * Returns number of newly posted rows.
+ */
+export async function syncNewPayloadCardsToCaboodle(
+  userId: string,
+  payloadCards: ContentCard[],
+): Promise<number> {
+  const trimmed = String(userId ?? '').trim();
+  if (!trimmed || !Array.isArray(payloadCards) || payloadCards.length === 0) return 0;
+  if (!CABOODLE_API_KEY) {
+    console.warn('[yahoo] CABOODLE_API_KEY missing, skipping payload->Caboodle POST sync');
+    return 0;
+  }
+
+  const existingCards = await fetchCaboodleCardsForUser(trimmed);
+  const existingTitles = new Set(existingCards.map(contentCardTitleKey).filter(Boolean));
+
+  const toPost = payloadCards.filter((card) => {
+    const titleKey = contentCardTitleKey(card);
+    if (!titleKey) return false;
+    if (existingTitles.has(titleKey)) return false;
+
+    const location = String(card.extras?.location ?? card.extras?.Location ?? '').toLowerCase();
+    return location === 'home' || location === 'inbox';
+  });
+
+  let posted = 0;
+  for (const card of toPost) {
+    const body = buildCaboodlePostPayload(trimmed, card);
+    const res = await fetch(CABOODLE_CARDS_URL, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-API-Key': CABOODLE_API_KEY,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => '');
+      console.warn('[yahoo] Caboodle POST failed:', res.status, text);
+      continue;
+    }
+
+    posted += 1;
+    existingTitles.add(contentCardTitleKey(card));
+  }
+
+  return posted;
 }

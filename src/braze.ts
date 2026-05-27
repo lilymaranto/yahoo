@@ -1,7 +1,12 @@
 // Thin wrapper around the Braze Web SDK loaded via CDN in index.html.
 // All Braze calls in the app should go through here.
 
-import { fetchCaboodleCardsForUser, type ContentCard } from './caboodle';
+import {
+  contentCardTitleKey,
+  fetchCaboodleCardsForUser,
+  syncNewPayloadCardsToCaboodle,
+  type ContentCard,
+} from './caboodle';
 
 const sdk = () => (window as any).braze ?? null;
 
@@ -21,16 +26,27 @@ function filterByLocation(cards: ContentCard[], location: 'home' | 'inbox'): Con
   return cards.filter((c) => cardLocation(c) === location && !c.dismissed);
 }
 
-function cardIdSignature(cards: ContentCard[]): string {
+function cardTitleSignature(cards: ContentCard[]): string {
   return cards
-    .map((c) => c.id)
+    .map((c) => contentCardTitleKey(c))
     .filter(Boolean)
     .sort()
     .join('|');
 }
 
 function feedChanged(prev: ContentCard[], next: ContentCard[]): boolean {
-  return cardIdSignature(prev) !== cardIdSignature(next);
+  return cardTitleSignature(prev) !== cardTitleSignature(next);
+}
+
+function mergeByNewTitle(prev: ContentCard[], incoming: ContentCard[]): ContentCard[] {
+  const existing = new Set(prev.map((c) => contentCardTitleKey(c)).filter(Boolean));
+  const additions = incoming.filter((card) => {
+    const key = contentCardTitleKey(card);
+    if (!key || existing.has(key)) return false;
+    existing.add(key);
+    return true;
+  });
+  return additions.length > 0 ? [...prev, ...additions] : prev;
 }
 
 function notifyHome(cards: ContentCard[]) {
@@ -51,20 +67,22 @@ function updateLocationFeed(
 
   const cache = location === 'home' ? homeCardsCache : inboxCardsCache;
   const prev = cache.get(userId) ?? [];
+  const computedNext =
+    options?.source === 'braze' ? mergeByNewTitle(prev, nextCards) : nextCards;
 
-  if (options?.source === 'braze' && nextCards.length === 0 && prev.length > 0) {
+  if (options?.source === 'braze' && computedNext.length === 0 && prev.length > 0) {
     return;
   }
 
-  if (!options?.force && !feedChanged(prev, nextCards)) {
+  if (!options?.force && !feedChanged(prev, computedNext)) {
     return;
   }
 
-  cache.set(userId, nextCards);
+  cache.set(userId, computedNext);
   if (userId !== currentBrazeUserId) return;
 
-  if (location === 'home') notifyHome(nextCards);
-  else notifyInbox(nextCards);
+  if (location === 'home') notifyHome(computedNext);
+  else notifyInbox(computedNext);
 }
 
 function applyCardUpdate(
@@ -99,7 +117,11 @@ function loadCaboodleCards(userId: string) {
 function setupContentCardsSubscription(braze: any) {
   braze.subscribeToContentCardsUpdates((updates: any) => {
     if (updates?.cards) {
-      applyCardUpdate(updates.cards as ContentCard[], { source: 'braze' });
+      const payloadCards = updates.cards as ContentCard[];
+      applyCardUpdate(payloadCards, { source: 'braze' });
+      if (currentBrazeUserId) {
+        void syncNewPayloadCardsToCaboodle(currentBrazeUserId, payloadCards);
+      }
     }
   });
 
