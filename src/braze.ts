@@ -54,6 +54,7 @@ export function brazeChangeUser(userId: string) {
 
   braze.changeUser(userId);
   braze.openSession();
+  braze.requestContentCardsRefresh();
 }
 
 export function brazeLogEvent(eventName: string, properties?: Record<string, unknown>) {
