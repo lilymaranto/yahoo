@@ -45,14 +45,17 @@ function isExpired(row: CaboodleRow): boolean {
   return Number.isFinite(t) && t <= Date.now();
 }
 
-/** Newest row wins per card_id (fallback: title). */
+/** Newest row wins: prefer sheet **title** column; if empty, fall back to `card_id` / `id` for row identity only. */
 export function dedupeCaboodleRows(rows: CaboodleRow[]): CaboodleRow[] {
   const byKey = new Map<string, CaboodleRow>();
 
   for (const row of rows) {
-    const key = String(row.card_id ?? row.id ?? row.title ?? '')
-      .trim()
-      .toLowerCase();
+    const titleKey = normalizedTitle(row.title);
+    const key =
+      titleKey ||
+      String(row.card_id ?? row.id ?? '')
+        .trim()
+        .toLowerCase();
     if (!key) continue;
 
     const existing = byKey.get(key);
@@ -96,10 +99,14 @@ export function rowToContentCard(row: CaboodleRow): ContentCard | null {
   };
 }
 
-export function contentCardTitleKey(card: Pick<ContentCard, 'title' | 'id'>): string {
-  const title = normalizedTitle(card.title);
-  if (title) return title;
-  return String(card.id ?? '').trim().toLowerCase();
+/**
+ * Dedupe / compare using the sheet **title** column only (same as Caboodle `title`).
+ * Uses `card.title` and `extras.title` (Braze often puts copy in extras) — never Braze `id`.
+ * Empty title → empty key (caller should skip title-based merge for those cards).
+ */
+export function contentCardTitleKey(card: Pick<ContentCard, 'title' | 'extras'>): string {
+  const fromExtras = card.extras && typeof card.extras === 'object' ? (card.extras as Record<string, unknown>).title : undefined;
+  return normalizedTitle(card.title ?? fromExtras);
 }
 
 function buildFilter(userId: string): string {
