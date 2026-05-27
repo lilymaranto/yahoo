@@ -197,10 +197,15 @@ const ArticleActions = ({ showCount }: { showCount?: string }) => (
   </div>
 );
 
-const Feed = () => {
+const Feed = ({ userId }: { userId: string }) => {
   const [signInDismissed, setSignInDismissed] = React.useState(false);
   const [homeCards, setHomeCards] = useState<any[]>([]);
   const promoCarouselRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Instantly clear old cards when user changes
+    setHomeCards([]);
+  }, [userId]);
 
   useEffect(() => {
     // Slight delay to ensure Braze is initialized
@@ -441,6 +446,11 @@ const NotificationCard = ({ title, image, time = '13h', onClick }: any) => (
 const NotificationsTab = ({ userId }: { userId: string }) => {
   const isAnon = userId.toLowerCase().startsWith('anon');
   const [inboxCards, setInboxCards] = useState<any[]>([]);
+
+  useEffect(() => {
+    // Instantly clear old cards when user changes
+    setInboxCards([]);
+  }, [userId]);
 
   useEffect(() => {
     let active = true;
@@ -743,7 +753,7 @@ export default function App() {
   return (
     <div className="min-h-[100dvh] w-full max-w-md mx-auto bg-[#101719] flex flex-col relative font-sans text-white pb-[90px]">
       {activeTab === 'home' && <Header scrolled={feedScrolled} />}
-      {activeTab === 'home' && <Feed />}
+      {activeTab === 'home' && <Feed userId={currentUserId} />}
       {activeTab === 'profile' && (
         <ProfileView userId={currentUserId} onChangeUser={applyUserChange} />
       )}
