@@ -203,18 +203,22 @@ const Feed = ({ userId }: { userId: string }) => {
   const promoCarouselRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const unsubscribe = subscribeToContentCards('home', (cards) => {
-      setHomeCards(cards || []);
-      if (cards && cards.length > 0) {
-        logContentCardImpressions(cards);
-        // Ensure the newly inserted cards are immediately visible (snaps scroll to the left)
-        if (promoCarouselRef.current) {
-          promoCarouselRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+    let active = true;
+    const timer = setTimeout(() => {
+      subscribeToContentCards('home', (cards) => {
+        if (!active) return;
+        setHomeCards(cards || []);
+        if (cards && cards.length > 0) {
+          logContentCardImpressions(cards);
+          // Ensure the newly inserted cards are immediately visible (snaps scroll to the left)
+          if (promoCarouselRef.current) {
+            promoCarouselRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+          }
         }
-      }
-    });
-    return () => unsubscribe();
-  }, [userId]);
+      });
+    }, 500);
+    return () => { active = false; clearTimeout(timer); };
+  }, []);
 
   return (
   <main className="feed-stack bg-[#101719]">
@@ -441,14 +445,18 @@ const NotificationsTab = ({ userId }: { userId: string }) => {
   const [inboxCards, setInboxCards] = useState<any[]>([]);
 
   useEffect(() => {
-    const unsubscribe = subscribeToContentCards('inbox', (cards) => {
-      setInboxCards(cards || []);
-      if (cards && cards.length > 0) {
-        logContentCardImpressions(cards);
-      }
-    });
-    return () => unsubscribe();
-  }, [userId]);
+    let active = true;
+    const timer = setTimeout(() => {
+      subscribeToContentCards('inbox', (cards) => {
+        if (!active) return;
+        setInboxCards(cards || []);
+        if (cards && cards.length > 0) {
+          logContentCardImpressions(cards);
+        }
+      });
+    }, 500);
+    return () => { active = false; clearTimeout(timer); };
+  }, []);
 
   return (
     <div className="bg-[#101719] flex flex-col pb-32">
